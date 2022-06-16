@@ -1,0 +1,66 @@
+extends layout
+
+block content
+  h1=title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='title') Title:
+      input#title.form-control(type='text', placeholder='Name of book' name='title' value=(undefined===book ? '' : book.title) )
+
+    div.form-group
+      label(for='author') Author:
+      select#author.form-control(type='select', placeholder='Select author' name='author' required='true' )
+        - authors.sort(function(a, b) {let textA = a.family_name.toUpperCase(); let textB = b.family_name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for author in authors
+          if book
+            option(value=author._id selected=(author._id.toString()===book.author._id.toString() ? 'selected' : false) ) #{author.name}
+          else
+            option(value=author._id) #{author.name}
+            
+        //- What the "if book" line is doing: 
+        //- There are 4 'controller methods' that can call this view: book_create_get, book_create_post, book_update_get and book_update_post
+        //- book var will always exist (and contain a Book object) if called from book_create_post (created), book_update_post (created), book_update_get (pulled from db)
+        //- book var will not exist if called from book_create_get, so if book does not exist, it was the initial call to the page when a user desires to create a book, IE - they have entered and posted anything yet 
+
+        //- A hardcoded way of writing the above author form to shows how it works: (doesn't sort list or pre select)
+        //- div.form-group
+        //-   label(for='author') Author:
+        //-   select(id="author", class="form-control", type='select', placeholder='Select author' name='author' required='true' )
+        //-     option(value=authors[0]._id) #{authors[0].name}
+        //-     option(value=authors[1].name) #{authors[1].name}
+        //-     option(value=authors[2].name) #{authors[2].name}
+        //-     option(value=authors[3].name) #{authors[3].name}
+
+        //- div
+        //- console.log(the_object_you_want_to_log)
+        //- div
+
+    div.form-group
+      label(for='summary') Summary:
+      textarea#summary.form-control(type='textarea', placeholder='Summary' name='summary' required='true') #{undefined===book ? '' : book.summary}
+    
+    div.form-group
+      label(for='isbn') ISBN:
+      input#isbn.form-control(type='text', placeholder='ISBN13' name='isbn' value=(undefined===book ? '' : book.isbn) required='true')
+    
+    div.form-group
+      label Genre:
+      div
+        for genre in genres
+          div(style='display: inline; padding-right:10px;')
+            input.checkbox-input(type='checkbox', name='genre', id=genre._id, value=genre._id, checked=genre.checked )
+            label(for=genre._id) #{genre.name}
+    
+    
+    
+    
+    button.btn.btn-primary(type='submit') Submittttt
+
+    //- - var blah = JSON.stringify(book.author)
+    //- <div> #{book.author.toString()} #{typeof book.author.toString()}  #{blah}  #{typeof blah}  #{book.author} #{typeof book.author} #{book.toString()} #{book._id}</div>
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg
