@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+require('dotenv').config();
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var catalogRouter = require('./routes/catalog');  //Import routes for "catalog" area of site
@@ -11,13 +13,11 @@ var catalogRouter = require('./routes/catalog');  //Import routes for "catalog" 
 var app = express();
 
 var mongoose = require('mongoose');
-//var mongoDB = "mongodb+srv://keva06:newpass@cluster0.sjjh8.mongodb.net/?retryWrites=true&w=majority";
 
-var mongoDB = "mongodb://keva06:newpass@cluster0-shard-00-00.sjjh8.mongodb.net:27017,cluster0-shard-00-01.sjjh8.mongodb.net:27017,cluster0-shard-00-02.sjjh8.mongodb.net:27017/?ssl=true&replicaSet=atlas-13w7fe-shard-0&authSource=admin&retryWrites=true&w=majority"
-
+var mongoDB_URI = process.env['MONGO_URI'];
 
 
-mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(mongoDB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
