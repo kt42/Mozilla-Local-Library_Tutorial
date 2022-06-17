@@ -197,13 +197,33 @@ exports.book_create_post = [
 
 
 // Display book delete form on GET.
-exports.book_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book delete GET');
+exports.book_delete_get = function(req, res, next){
+    // get the book instance from db, send the bookinstance_form, with the data, to confirm deletion
+    Book.findById(req.params.id, function (err, book) {
+        if (err){return next(err)}
+        else
+        {
+            console.log(book);
+            // even if there are instan in the db ([] returned), just pass it to the view and deal with it there
+            res.render('book_delete', {book: book, title: 'Delete Book'})
+            return;
+        }
+    })
 };
 
 // Handle book delete on POST.
-exports.book_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book delete POST');
+exports.book_delete_post = function(req, res, next) {
+
+    Book.findByIdAndRemove(req.body.book_id, function (err, book) {
+        if (err){
+            console.log(err)
+            next(err);
+        }
+        else{
+            console.log("Removed Book: ", book);
+            res.redirect('/catalog/books')
+        }
+    })
 };
 
 // Display book update form on GET.
